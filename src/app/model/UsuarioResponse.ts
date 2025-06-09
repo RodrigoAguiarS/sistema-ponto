@@ -1,5 +1,7 @@
 import { PessoaResponse } from './PessoaResponse';
 import { PerfilResponse } from './PerfilResponse';
+import { CargoResponse } from './CargoResponse';
+import { VinculoResponse } from './VinculoResponse';
 
 export class UsuarioResponse {
   id: number;
@@ -7,6 +9,8 @@ export class UsuarioResponse {
   email: string;
   pessoa: PessoaResponse;
   perfis: PerfilResponse[];
+  cargo: CargoResponse;
+  vinculo: VinculoResponse;
   ativo: boolean;
 
   constructor() {
@@ -15,6 +19,8 @@ export class UsuarioResponse {
     this.email = '';
     this.pessoa = new PessoaResponse();
     this.perfis = [];
+    this.cargo = new CargoResponse();
+    this.vinculo = new VinculoResponse();
     this.ativo = true;
   }
 }

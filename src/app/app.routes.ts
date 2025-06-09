@@ -32,6 +32,13 @@ export const routes: Routes = [
         data: { roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR] },
       },
       {
+        path: 'usuarios',
+        loadChildren: () =>
+          import('./pages/usuario/usuario.routes').then((m) => m.usuarioRoutes),
+        canActivate: [RoleGuard],
+        data: { roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR] },
+      },
+      {
         path: 'result',
         component: ResultComponent,
       },

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { TipoVinculo } from '../../../model/TipoVinculo';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CargoResponse } from '../../../model/CargoResponse';
 import { PerfilResponse } from '../../../model/PerfilResponse';
@@ -7,21 +6,22 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { UsuarioService } from '../../../services/usuario.service';
 import { CargoService } from '../../../services/cargo.service';
 import { PerfilService } from '../../../services/perfil.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NgxMaskDirective } from 'ngx-mask';
-import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { TipoVinculo } from '../../../model/TipoVinculo';
 
 @Component({
-  selector: 'app-usuario-create',
-    imports: [
+  selector: 'app-usuario-update',
+      imports: [
     CommonModule,
     ReactiveFormsModule,
     NzFormModule,
@@ -34,42 +34,46 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
     NgxMaskDirective,
     NzDatePickerModule
   ],
-  templateUrl: './usuario-create.component.html',
-  styleUrl: './usuario-create.component.less'
+  templateUrl: './usuario-update.component.html',
+  styleUrl: './usuario-update.component.less'
 })
-export class UsuarioCreateComponent {
+export class UsuarioUpdateComponent {
 usuarioForm!: FormGroup;
   cargos: CargoResponse[] = [];
-  tiposVinculo: string[] = Object.values(TipoVinculo);
   perfis: PerfilResponse[] = [];
+  tiposVinculo: string[] = Object.values(TipoVinculo);
   carregando = false;
+  id!: number;
 
   constructor(
     private readonly message: NzMessageService,
-    private readonly produtoService: UsuarioService,
+    private readonly usuarioService: UsuarioService,
     private readonly cargoService: CargoService,
     private readonly perfilService: PerfilService,
     private readonly formBuilder: FormBuilder,
+    private readonly route: ActivatedRoute,
     private readonly router: Router
   ) {}
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.params['id'];
     this.initForm();
+    this.carregarUsuario();
     this.carregarPerfis();
     this.carregarUnidades();
   }
 
-  criar(): void {
+  update(): void {
     if (this.usuarioForm.valid) {
-      this.carregando = true;
-      this.produtoService.create(this.usuarioForm.value).subscribe({
+      this.usuarioForm.value.id = this.id;
+      this.usuarioService.update(this.usuarioForm.value).subscribe({
         next: (resposta) => {
           console.log(resposta);
           this.router.navigate(['/result'], {
             queryParams: {
               type: 'success',
               title: 'Usuário de nome - ' + resposta.pessoa.nome,
-              message: 'Foi criado com sucesso!',
+              message: 'Foi atualizado com sucesso!',
               createRoute: '/usuarios/create',
               listRoute: '/usuarios/list',
             },
@@ -91,6 +95,30 @@ usuarioForm!: FormGroup;
         },
       });
     }
+  }
+
+  private carregarUsuario(): void {
+    this.carregando = true;
+    this.usuarioService.findById(this.id).subscribe({
+      next: (usuario) => {
+        console.log(usuario);
+        this.usuarioForm.patchValue({
+          id: usuario.id,
+          email: usuario.email,
+          senha: '',
+          perfil: usuario.perfis[0]?.id,
+          dataNascimento: usuario.pessoa.dataNascimento,
+          cpf: usuario.pessoa.cpf,
+          vinculo: usuario.vinculo.tipo,
+          cargo: usuario.cargo?.id,
+          nome: usuario.pessoa.nome,
+          telefone: usuario.pessoa.telefone,
+        });
+      },
+      complete: () => {
+        this.carregando = false;
+      },
+    });
   }
 
   private carregarUnidades(): void {
@@ -133,12 +161,12 @@ usuarioForm!: FormGroup;
         [Validators.required, Validators.email, Validators.maxLength(100)],
       ],
       senha: ['', [Validators.required, Validators.minLength(3)]],
-      dataNascimento: ['', Validators.required],
       telefone: ['', Validators.required],
       perfil: [null, Validators.required],
+      cargo: [null, Validators.required],
       vinculo: [null, Validators.required],
       cpf: ['', Validators.required],
-      cargo: [null, Validators.required],
+      dataNascimento: ['', Validators.required],
     });
   }
 

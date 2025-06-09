@@ -26,10 +26,24 @@
           </li>
         </ul>
       </li>
-      <li nz-submenu nzOpen nzTitle="Usuários" nzIcon="form">
+      <li
+        *ngIf="
+          roles.includes(ACESSO.SUPERADM) ||
+          roles.includes(ACESSO.ADMINISTRADOR)
+        "
+        nz-submenu
+        nzOpen
+        nzTitle="Usuários"
+        nzIcon="form"
+      >
         <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a>Cadastrar</a>
+          <li nz-menu-item [nzMatchRouter]="true" routerLink="/usuarios/create">
+            <i nz-icon nzType="user"></i>
+            <span>Cadastrar</span>
+          </li>
+          <li nz-menu-item [nzMatchRouter]="true" routerLink="/usuarios/list">
+            <i nz-icon nzType="unordered-list"></i>
+            <span>Listar</span>
           </li>
         </ul>
       </li>
@@ -54,7 +68,10 @@
 
       <!-- CARGOS -->
       <li
-        *ngIf="roles.includes(ACESSO.SUPERADM) || roles.includes(ACESSO.ADMINISTRADOR)"
+        *ngIf="
+          roles.includes(ACESSO.SUPERADM) ||
+          roles.includes(ACESSO.ADMINISTRADOR)
+        "
         nz-submenu
         nzTitle="Cargos"
         nzIcon="profile"

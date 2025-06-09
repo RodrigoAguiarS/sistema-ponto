@@ -7,8 +7,6 @@ export class PessoaResponse {
   telefone: string;
   cpf: string;
   dataNascimento: string;
-  cargo: CargoResponse;
-  vinculo: VinculoResponse;
 
   constructor() {
     this.id = 0;
@@ -16,7 +14,5 @@ export class PessoaResponse {
     this.telefone = '';
     this.cpf = '';
     this.dataNascimento = '';
-    this.cargo = new CargoResponse();
-    this.vinculo = new VinculoResponse();
   }
 }

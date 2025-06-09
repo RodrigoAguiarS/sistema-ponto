@@ -6,7 +6,7 @@
           nz-form
           nzLayout="vertical"
           [formGroup]="usuarioForm"
-          (ngSubmit)="criar()"
+          (ngSubmit)="update()"
           class="usuario-form"
         >
           <h2 class="form-title">Cadastrar Usuário</h2>
@@ -204,7 +204,7 @@
               [disabled]="!usuarioForm.valid || carregando"
               [nzLoading]="carregando"
             >
-              Cadastrar
+              Atualizar
             </button>
           </div>
         </form>
@@ -212,3 +212,4 @@
     </div>
   </nz-spin>
 </div>
+
