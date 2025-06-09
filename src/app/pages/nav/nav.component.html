@@ -1,0 +1,77 @@
+<nz-layout class="app-layout">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
+    <div class="sidebar-logo">
+      <a routerLink="/home" class="logo-link">
+        <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo" />
+        <h1>{{ usuario.pessoa.nome }}</h1>
+      </a>
+    </div>
+    <ul
+      nz-menu
+      nzTheme="dark"
+      nzMode="inline"
+      [nzInlineCollapsed]="isCollapsed"
+    >
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home">Home</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzOpen nzTitle="Usuários" nzIcon="form">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a>Cadastrar</a>
+          </li>
+        </ul>
+      </li>
+      <!-- PERFIL -->
+      <li
+        *ngIf="roles.includes(ACESSO.SUPERADM)"
+        nz-submenu
+        nzTitle="Perfil"
+        nzIcon="profile"
+      >
+        <ul>
+          <li nz-menu-item [nzMatchRouter]="true" routerLink="/perfis/create">
+            <i nz-icon nzType="plus-circle"></i>
+            <span>Cadastrar</span>
+          </li>
+          <li nz-menu-item [nzMatchRouter]="true" routerLink="/perfis/list">
+            <i nz-icon nzType="unordered-list"></i>
+            <span>Listar</span>
+          </li>
+        </ul>
+      </li>
+      <li nz-menu-item (click)="deslogar()" (keydown)="onKeyDown($event)">
+        <i nz-icon nzType="logout"></i>
+        <span>Sair</span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <nz-icon
+            class="trigger"
+            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          />
+        </span>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
