@@ -25,6 +25,13 @@ export const routes: Routes = [
         data: { roles: [ACESSO.SUPERADM] },
       },
       {
+        path: 'cargos',
+        loadChildren: () =>
+          import('./pages/cargo/cargo.routes').then((m) => m.cargoRoutes),
+        canActivate: [RoleGuard],
+        data: { roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR] },
+      },
+      {
         path: 'result',
         component: ResultComponent,
       },

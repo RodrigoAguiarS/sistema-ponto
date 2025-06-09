@@ -1,0 +1,134 @@
+<div class="container-wrapper">
+  <nz-spin [nzSpinning]="carregando">
+    <div class="container">
+      <nz-card [nzBordered]="false" class="form-container">
+        <form
+          nz-form
+          nzLayout="vertical"
+          [formGroup]="cargoForm"
+          (ngSubmit)="delete()"
+          class="cargo-form"
+        >
+          <!-- Cabeçalho -->
+          <h2 class="form-title">Apagar Cargo</h2>
+
+          <!-- Informações da Status -->
+          <h3 class="form-section-title">Informações do Tipo</h3>
+          <div nz-row [nzGutter]="16">
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24">
+              <nz-form-item>
+                <nz-form-label [nzRequired]="true" nzFor="nome"
+                  >Nome</nz-form-label
+                >
+                <nz-form-control>
+                  <input
+                    id="nome"
+                    nz-input
+                    maxlength="50"
+                    formControlName="nome"
+                    placeholder="Nome do cargo"
+                    required
+                  />
+                  <div class="char-counter">
+                    {{ cargoForm.get("nome")?.value.length || 0 }}/50 caracteres
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24">
+              <nz-form-item>
+                <nz-form-label [nzRequired]="true" nzFor="descricao"
+                  >Descrição</nz-form-label
+                >
+                <nz-form-control>
+                  <textarea
+                    id="descricao"
+                    nz-input
+                    maxlength="255"
+                    formControlName="descricao"
+                    placeholder="Descrição da cargo"
+                    required
+                  ></textarea>
+                  <div class="char-counter">
+                    {{ cargoForm.get("descricao")?.value.length || 0 }}/255
+                    caracteres
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <!-- Novos campos: Salário Base e Nível Hierarquia -->
+            <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="12">
+              <nz-form-item>
+                <nz-form-label [nzRequired]="true" nzFor="salarioBase"
+                  >Salário Base</nz-form-label
+                >
+                <nz-form-control>
+                  <nz-input-group nzPrefixIcon="dollar">
+                    <input
+                      id="salarioBase"
+                      nz-input
+                      formControlName="salarioBase"
+                      placeholder="0,00"
+                      required
+                      [options]="{
+                        prefix: 'R$ ',
+                        thousands: '.',
+                        decimal: ',',
+                        align: 'left',
+                        precision: 2,
+                        nullable: false
+                      }"
+                      currencyMask
+                    />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col [nzXs]="24" [nzSm]="12" [nzMd]="12">
+              <nz-form-item>
+                <nz-form-label [nzRequired]="true" nzFor="nivelHierarquia"
+                  >Nível Hierarquia</nz-form-label
+                >
+                <nz-form-control>
+                  <nz-input-number
+                    id="nivelHierarquia"
+                    formControlName="nivelHierarquia"
+                    [nzMin]="1"
+                    [nzMax]="5"
+                    [nzStep]="1"
+                    style="width: 100%"
+                    required
+                  ></nz-input-number>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="form-actions">
+            <button
+              type="button"
+              nz-button
+              nzType="default"
+              (click)="cancelar()"
+            >
+              Cancelar
+            </button>
+            <button
+              [nzLoading]="carregando"
+              type="submit"
+              nz-button
+              nzType="primary"
+            >
+              Apagar
+            </button>
+          </div>
+        </form>
+      </nz-card>
+    </div>
+  </nz-spin>
+</div>
+
+
