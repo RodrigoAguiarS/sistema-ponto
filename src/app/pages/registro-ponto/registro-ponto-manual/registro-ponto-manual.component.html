@@ -1,0 +1,166 @@
+<div class="container-wrapper">
+  <nz-spin [nzSpinning]="carregando">
+    <div class="container">
+      <nz-card [nzBordered]="false">
+        <!-- Cabeçalho com as informações do usuário -->
+        <div class="user-header">
+          <nz-descriptions [nzTitle]="'Informações do Usuário'" nzBordered>
+            <nz-descriptions-item nzTitle="Nome" [nzSpan]="1">{{
+              usuario.pessoa.nome
+            }}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Email" [nzSpan]="1">{{
+              usuario.email
+            }}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="Cargo" [nzSpan]="1">{{
+              usuario.cargo.nome
+            }}</nz-descriptions-item>
+          </nz-descriptions>
+        </div>
+
+        <nz-divider></nz-divider>
+
+        <!-- Botão para adicionar registro manual -->
+        <div class="action-buttons">
+          <button nz-button nzType="primary" (click)="showModal()">
+            <span nz-icon nzType="plus"></span>
+            Adicionar Registro Manual
+          </button>
+        </div>
+
+        <nz-divider></nz-divider>
+
+        <!-- Tabela de registros de ponto -->
+        <h3>Registros de Ponto</h3>
+        <nz-table
+          #basicTable
+          [nzData]="registrosPonto"
+          nzSize="small"
+          [nzFrontPagination]="false"
+          [nzPageSize]="itensPorPagina"
+          [nzTotal]="totalElementos"
+          [nzPageIndex]="paginaAtual"
+          [nzLoading]="carregando"
+          (nzPageIndexChange)="aoMudarPagina($event)"
+          [nzBordered]="true"
+        >
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Hora</th>
+              <th scope="col">Tipo</th>
+              <th scope="col">Observação</th>
+              <th
+                *ngIf="
+                  roles.includes(Acesso.SUPERADM) ||
+                  roles.includes(Acesso.ADMINISTRADOR)
+                "
+                scope="col"
+              >Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let registro of registrosPonto">
+              <td>{{ registro.dataHora | date : "dd/MM/yyyy" }}</td>
+              <td>{{ registro.dataHora | date : "HH:mm:ss" }}</td>
+              <td>
+                <nz-tag
+                  [nzColor]="registro.tipo === 'ENTRADA' ? 'green' : 'red'"
+                >
+                  {{ getTipoDisplay(registro.tipo) }}
+                </nz-tag>
+              </td>
+              <td>{{ registro.observacao || "-" }}</td>
+              <td
+                *ngIf="
+                  roles.includes(Acesso.SUPERADM) ||
+                  roles.includes(Acesso.ADMINISTRADOR)
+                "
+              >
+                <a (click)="editarRegistro(registro)">
+                  <i
+                    nz-icon
+                    nzType="edit"
+                    nzTheme="outline"
+                    title="Editar Registro"
+                  ></i>
+                </a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a
+                  nz-popconfirm
+                  nzPopconfirmTitle="Tem certeza que deseja excluir este registro?"
+                  (nzOnConfirm)="excluirRegistro(registro.id)"
+                  (nzOnCancel)="cancel()"
+                >
+                  <i
+                    nz-icon
+                    nzType="delete"
+                    nzTheme="outline"
+                    title="Excluir Registro"
+                  ></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </div>
+  </nz-spin>
+</div>
+
+<!-- Modal para adicionar registro manual -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="'Adicionar Registro de Ponto Manual'"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isSubmitting"
+  nzOkText="Confirmar"
+  nzCancelText="Cancelar"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="pontoForm" nzLayout="vertical">
+      <!-- Data e hora -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="dataHora">Data e Hora</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor selecione a data e hora!">
+          <nz-date-picker
+            id="dataHora"
+            formControlName="dataHora"
+            nzShowTime
+            nzFormat="dd/MM/yyyy HH:mm:ss"
+            nzPlaceHolder="Selecione a data e hora"
+            style="width: 100%"
+          ></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Tipo de registro -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="tipo">Tipo de Registro</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor selecione o tipo de registro!">
+          <nz-select id="tipo" formControlName="tipo" style="width: 100%">
+            <nz-option
+              *ngFor="let tipo of tiposRegistro"
+              [nzValue]="tipo"
+              [nzLabel]="getTipoDisplay(tipo)"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Observação -->
+      <nz-form-item>
+        <nz-form-label nzRequired nzFor="observacao">Observação</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor insira uma observação!">
+          <textarea
+            id="observacao"
+            formControlName="observacao"
+            nz-input
+            rows="4"
+            placeholder="Informe o motivo do registro manual"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

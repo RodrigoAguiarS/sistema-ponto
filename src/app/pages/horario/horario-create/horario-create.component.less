@@ -1,0 +1,122 @@
+// Container principal com scroll quando necessário
+.container-wrapper {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px); // Ajuste conforme o tamanho do seu header
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+// Estilização do cabeçalho do card
+.card-title-container {
+  width: 100%;
+}
+
+.user-info-header {
+  width: 100%;
+}
+
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap; // Permite a quebra em telas menores
+  gap: 10px; // Espaçamento quando quebrar
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+}
+
+// Estilização dos detalhes do usuário
+.user-details {
+  background-color: rgba(0, 0, 0, 0.02);
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+
+  // Responsividade para telas menores
+  @media screen and (max-width: 768px) {
+    ::ng-deep nz-descriptions {
+      [nzTitle] {
+        padding-bottom: 8px;
+      }
+    }
+  }
+}
+
+// Estilização da tabela
+:deep(.ant-table-wrapper) {
+  overflow-x: auto; // Habilita scroll horizontal se necessário
+
+  .ant-table-thead > tr > th {
+    background-color: #fafafa;
+    font-weight: 500;
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background-color: #e6f7ff;
+  }
+}
+
+// Estilização das ações da tabela
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+// Corrigindo o tamanho dos time-pickers no formulário
+:deep(nz-time-picker) {
+  width: 100%;
+}
+
+// Estilização do formulário no modal
+:deep(nz-modal) {
+  .ant-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  nz-form-item {
+    margin-bottom: 16px;
+  }
+
+  nz-form-label {
+    font-weight: 500;
+  }
+
+  nz-select {
+    width: 100%;
+  }
+}
+
+// Estilização para o empty state
+:deep(nz-empty) {
+  margin: 32px 0;
+}
+
+// Para garantir que o conteúdo caiba na tela em dispositivos móveis
+@media screen and (max-width: 576px) {
+  .container-wrapper {
+    padding: 12px;
+  }
+
+  :deep(.ant-card-head-title) {
+    padding: 12px 0;
+  }
+
+  :deep(.ant-card-body) {
+    padding: 12px;
+  }
+}

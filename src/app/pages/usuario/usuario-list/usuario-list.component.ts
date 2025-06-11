@@ -1,3 +1,4 @@
+import { ACESSO } from './../../../model/Acesso';
 import { Component } from '@angular/core';
 import { UsuarioResponse } from '../../../model/UsuarioResponse';
 import { PerfilResponse } from '../../../model/PerfilResponse';
@@ -52,6 +53,9 @@ import { NgxMaskDirective } from 'ngx-mask';
   styleUrl: './usuario-list.component.less',
 })
 export class UsuarioListComponent {
+  usuarioLogado: UsuarioResponse = new UsuarioResponse();
+  Acesso = ACESSO;
+  roles: string[] = [];
   usuarios: UsuarioResponse[] = [];
   perfis: PerfilResponse[] = [];
   cargos: CargoResponse[] = [];
@@ -65,7 +69,7 @@ export class UsuarioListComponent {
   nenhumResultadoEncontrado = false;
 
   constructor(
-    private readonly tipoService: UsuarioService,
+    private readonly usuarioService: UsuarioService,
     private readonly formBuilder: FormBuilder,
     private readonly perfilService: PerfilService,
     private readonly cargoService: CargoService,
@@ -121,7 +125,7 @@ export class UsuarioListComponent {
       cpf: this.filtroForm.get('cpf')?.value.trim().toLowerCase() ?? '',
       email: this.filtroForm.get('email')?.value.trim().toLowerCase() ?? '',
     };
-    this.tipoService.buscarPaginado(params).subscribe({
+    this.usuarioService.buscarPaginado(params).subscribe({
       next: (response) => {
         this.usuarios = response.content;
         console.log(response);

@@ -66,6 +66,52 @@
         </ul>
       </li>
 
+      <!-- Registrar horario -->
+      <li
+        *ngIf="
+          roles.includes(ACESSO.SUPERADM) ||
+          roles.includes(ACESSO.ADMINISTRADOR) ||
+          roles.includes(ACESSO.OPERADOR)
+        "
+        nz-submenu
+        nzTitle="Registrar Horário"
+        nzIcon="clock-circle"
+      >
+        <ul>
+          <li
+            nz-menu-item
+            [nzMatchRouter]="true"
+            routerLink="/registro-ponto/create"
+          >
+            <i nz-icon nzType="unordered-list"></i>
+            <span>Registrar Horário</span>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Horario -->
+      <li
+        *ngIf="
+          roles.includes(ACESSO.SUPERADM) ||
+          roles.includes(ACESSO.ADMINISTRADOR) ||
+          roles.includes(ACESSO.OPERADOR)
+        "
+        nz-submenu
+        nzTitle="Horários"
+        nzIcon="history"
+      >
+        <ul>
+          <li
+            nz-menu-item
+            [nzMatchRouter]="true"
+            routerLink="/horarios/consultar/{{ usuario.id }}"
+          >
+            <i nz-icon nzType="unordered-list"></i>
+            <span>Meus Horarios</span>
+          </li>
+        </ul>
+      </li>
+
       <!-- CARGOS -->
       <li
         *ngIf="

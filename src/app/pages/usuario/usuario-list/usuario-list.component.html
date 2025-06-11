@@ -16,7 +16,12 @@
     <form [formGroup]="filtroForm" (ngSubmit)="buscarUsuarios()">
       <input nz-input placeholder="Nome" formControlName="nome" />
       <input nz-input placeholder="Email" formControlName="email" />
-      <input nz-input placeholder="CPF" formControlName="cpf" mask="000.000.000-00" />
+      <input
+        nz-input
+        placeholder="CPF"
+        formControlName="cpf"
+        mask="000.000.000-00"
+      />
       <input nz-input placeholder="Telefone" formControlName="telefone" />
       <nz-select placeholder="Perfil" formControlName="perfil" nzAllowClear>
         <nz-option
@@ -92,6 +97,22 @@
               nzType="delete"
               nzTheme="outline"
               title="Deletar Usuário"
+            ></i>
+          </a>
+          <a [routerLink]="['/horarios/consultar', usuario.id]">
+            <i
+              nz-icon
+              nzType="clock-circle"
+              nzTheme="outline"
+              title="Horário Usuário"
+            ></i>
+          </a>
+          <a [routerLink]="['/registro-ponto/manual', usuario.id]">
+            <i
+              nz-icon
+              nzType="history"
+              nzTheme="outline"
+              title="Registros Ponto Usuário"
             ></i>
           </a>
         </td>

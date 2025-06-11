@@ -1,0 +1,212 @@
+<div class="container-wrapper">
+  <nz-spin [nzSpinning]="carregando">
+    <div class="container">
+      <nz-card [nzTitle]="cardTitle" [nzBordered]="false">
+        <ng-template #cardTitle>
+          <div class="card-title-container">
+            <div class="user-info-header">
+              <div class="user-header">
+                <h2>Horários de Trabalho - {{ usuario.pessoa.nome }}</h2>
+                <button
+                  *ngIf="
+                    roles.includes(Acesso.SUPERADM) ||
+                    roles.includes(Acesso.ADMINISTRADOR)
+                  "
+                  nz-button
+                  nzType="primary"
+                  (click)="showModal()"
+                >
+                  <span nz-icon nzType="plus"></span>
+                  Adicionar Horário
+                </button>
+              </div>
+              <nz-descriptions
+                [nzColumn]="3"
+                nzSize="small"
+                class="user-details"
+              >
+                <nz-descriptions-item nzTitle="CPF">
+                  {{ usuario.pessoa.cpf }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Telefone">
+                  {{ usuario.pessoa.telefone }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Data de Nascimento">
+                  {{ usuario.pessoa.dataNascimento | date : "dd/MM/yyyy" }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Cargo">
+                  {{ usuario.cargo.nome }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Vínculo">
+                  {{ usuario.vinculo.tipo }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="E-mail">
+                  {{ usuario.email }}
+                </nz-descriptions-item>
+              </nz-descriptions>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Tabela de horários -->
+        <nz-table
+          #horariosTable
+          [nzData]="horarios"
+          [nzLoading]="carregando"
+          [nzPageSize]="10"
+          [nzShowPagination]="false"
+          *ngIf="horarios.length > 0; else semHorarios"
+        >
+          <thead>
+            <tr>
+              <th scope="col">Dia da Semana</th>
+              <th scope="col">Hora de Início</th>
+              <th scope="col">Hora de Término</th>
+              <th scope="col">Status</th>
+              <th
+                scope="col"
+                *ngIf="
+                  roles.includes(Acesso.SUPERADM) ||
+                  roles.includes(Acesso.ADMINISTRADOR)
+                "
+              >
+                Ações
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let horario of horariosTable.data">
+              <td>{{ traduzirDiaSemana(horario.diaSemana) }}</td>
+              <td>{{ horario.horaInicio }}</td>
+              <td>{{ horario.horaFim }}</td>
+              <td>
+                <nz-tag [nzColor]="horario.ativo ? 'green' : 'red'">
+                  {{ horario.ativo ? "Ativo" : "Inativo" }}
+                </nz-tag>
+              </td>
+              <td
+                *ngIf="
+                  roles.includes(Acesso.SUPERADM) ||
+                  roles.includes(Acesso.ADMINISTRADOR)
+                "
+              >
+                <a (click)="editarHorario(horario)">
+                  <i
+                    nz-icon
+                    nzType="edit"
+                    nzTheme="outline"
+                    title="Editar Horário"
+                  ></i>
+                </a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a
+                  nz-popconfirm
+                  nzPopconfirmTitle="Tem certeza que deseja excluir este horário?"
+                  (nzOnConfirm)="excluirHorario(horario.id)"
+                  (nzOnCancel)="cancel()"
+                >
+                  <i
+                    nz-icon
+                    nzType="delete"
+                    nzTheme="outline"
+                    title="Excluir Horário"
+                  ></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+
+        <ng-template #semHorarios>
+          <nz-empty
+            nzNotFoundContent="Nenhum horário cadastrado para este usuário"
+            [nzNotFoundFooter]="footerTpl"
+          ></nz-empty>
+          <ng-template #footerTpl>
+            <button
+              *ngIf="
+                roles.includes(Acesso.SUPERADM) ||
+                roles.includes(Acesso.ADMINISTRADOR)
+              "
+              nz-button
+              nzType="primary"
+              (click)="showModal()"
+            >
+              Adicionar Horário
+            </button>
+          </ng-template>
+        </ng-template>
+      </nz-card>
+    </div>
+  </nz-spin>
+</div>
+
+<!-- Modal para adicionar/editar horário -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="modalTitle"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isSubmitting"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="horarioForm" (ngSubmit)="handleOk()">
+      <!-- Dia da Semana -->
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true" nzFor="diaSemana"
+          >Dia da Semana</nz-form-label
+        >
+        <nz-form-control>
+          <nz-select
+            id="diaSemana"
+            formControlName="diaSemana"
+            nzPlaceHolder="Selecione o dia da semana"
+          >
+            <nz-option
+              *ngFor="let dia of diasSemana"
+              [nzLabel]="traduzirDiaSemana(dia)"
+              [nzValue]="dia"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Hora de Início -->
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true" nzFor="horaInicio"
+          >Hora de Início</nz-form-label
+        >
+        <nz-form-control>
+          <nz-time-picker
+            id="horaInicio"
+            formControlName="horaInicio"
+            nzFormat="HH:mm:ss"
+            nzPlaceHolder="Selecione a hora de início"
+          ></nz-time-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Hora de Término -->
+      <nz-form-item>
+        <nz-form-label [nzRequired]="true" nzFor="horaFim"
+          >Hora de Término</nz-form-label
+        >
+        <nz-form-control>
+          <nz-time-picker
+            id="horaFim"
+            formControlName="horaFim"
+            nzFormat="HH:mm:ss"
+            nzPlaceHolder="Selecione a hora de término"
+          ></nz-time-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <!-- Status Ativo -->
+      <nz-form-item>
+        <nz-form-control>
+          <label nz-checkbox formControlName="ativo">Ativo</label>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

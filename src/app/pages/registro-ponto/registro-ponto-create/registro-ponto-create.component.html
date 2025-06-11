@@ -1,0 +1,114 @@
+<div class="container-wrapper">
+  <nz-spin [nzSpinning]="carregando">
+    <div class="container">
+      <nz-card [nzBordered]="false" class="registro-ponto-card">
+        <!-- Relógio digital -->
+        <div class="relogio-digital">
+          <div class="data-atual">{{ dataAtual | date: 'EEEE, dd/MM/yyyy' }}</div>
+          <div class="hora-atual">{{ horaAtual }}</div>
+        </div>
+
+        <!-- Informações do usuário -->
+        <div class="usuario-info">
+          <h2>{{ usuarioLogado?.pessoa?.nome }}</h2>
+          <p>{{ usuarioLogado?.cargo?.nome }}</p>
+        </div>
+
+        <!-- Última marcação -->
+        <div class="ultima-marcacao" *ngIf="ultimoRegistro">
+          <nz-alert
+            nzType="info"
+            [nzMessage]="'Última marcação: ' + ultimaAcaoFormatada"
+            nzShowIcon
+          ></nz-alert>
+        </div>
+
+        <!-- Botão de registro -->
+        <div class="acoes-container">
+          <button
+            nz-button
+            nzType="primary"
+            nzSize="large"
+            [disabled]="carregando"
+            (click)="abrirModalRegistro()"
+          >
+            <span nz-icon [nzType]="ultimoRegistro?.tipo === 'ENTRADA' ? 'logout' : 'login'"></span>
+            {{ ultimoRegistro?.tipo === 'ENTRADA' ? 'Registrar Saída' : 'Registrar Entrada' }}
+          </button>
+        </div>
+
+        <!-- Registros do dia atual -->
+        <div class="registros-hoje">
+          <h3>Registros de hoje</h3>
+          <nz-table
+            #basicTable
+            [nzData]="registrosHoje"
+            [nzShowPagination]="false"
+            nzSize="small"
+            [nzLoading]="carregando"
+          >
+            <thead>
+              <tr>
+                <th scope="col">Hora</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Observação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let registro of basicTable.data">
+                <td>{{ registro.dataHora | date: 'HH:mm:ss' }}</td>
+                <td>
+                  <nz-tag
+                    [nzColor]="registro.tipo === 'ENTRADA' ? 'green' : 'red'"
+                  >
+                    {{ registro.tipo === 'ENTRADA' ? 'Entrada' : 'Saída' }}
+                  </nz-tag>
+                </td>
+                <td>{{ registro.observacao || '-' }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </nz-card>
+    </div>
+  </nz-spin>
+</div>
+
+<!-- Modal para observação do registro -->
+<nz-modal
+  [(nzVisible)]="isModalVisible"
+  [nzTitle]="'Confirmar registro'"
+  (nzOnCancel)="cancelarRegistro()"
+  (nzOnOk)="confirmarRegistro()"
+  [nzOkLoading]="enviandoRegistro"
+  nzOkText="Confirmar"
+  nzCancelText="Cancelar"
+>
+  <ng-container *nzModalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label>Horário</nz-form-label>
+        <nz-form-control>
+          <input
+            nz-input
+            [value]="horaAtual"
+            disabled
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Observação (opcional)</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            [(ngModel)]="observacao"
+            name="observacao"
+            [nzAutosize]="{ minRows: 3, maxRows: 5 }"
+            placeholder="Informe alguma observação se necessário"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

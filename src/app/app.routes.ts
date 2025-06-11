@@ -32,6 +32,26 @@ export const routes: Routes = [
         data: { roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR] },
       },
       {
+        path: 'registro-ponto',
+        loadChildren: () =>
+          import('./pages/registro-ponto/registro-ponto.routes').then(
+            (m) => m.registroPontoRoutes
+          ),
+        canActivate: [RoleGuard],
+        data: {
+          roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR, ACESSO.OPERADOR],
+        },
+      },
+      {
+        path: 'horarios',
+        loadChildren: () =>
+          import('./pages/horario/horario.routes').then((m) => m.horarioRoutes),
+        canActivate: [RoleGuard],
+        data: {
+          roles: [ACESSO.SUPERADM, ACESSO.ADMINISTRADOR, ACESSO.OPERADOR],
+        },
+      },
+      {
         path: 'usuarios',
         loadChildren: () =>
           import('./pages/usuario/usuario.routes').then((m) => m.usuarioRoutes),

@@ -1,1 +1,89 @@
-<p>home works!</p>
+<div class="home-container">
+  <nz-card nzTitle="Jornada de Trabalho" [nzLoading]="carregando">
+    <ng-container *ngIf="jornada; else semDados">
+      <div class="jornada-info">
+        <nz-row [nzGutter]="16">
+          <!-- Data atual -->
+          <nz-col [nzXs]="24" [nzSm]="24" [nzMd]="24">
+            <div class="data-atual">
+              <h2>{{ jornada.data | date : "dd/MM/yyyy" }}</h2>
+            </div>
+          </nz-col>
+
+          <!-- Cards com informações da jornada -->
+          <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+            <nz-card class="info-card card-trabalhado">
+              <div class="card-content">
+                <div class="card-icon">
+                  <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
+                </div>
+                <div class="card-stats">
+                  <span class="card-value">{{
+                    formatarDuracao(jornada.horasTrabalhadas)
+                  }}</span>
+                  <span class="card-label">Trabalhado hoje</span>
+                </div>
+              </div>
+            </nz-card>
+          </nz-col>
+
+          <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+            <nz-card class="info-card card-previsto">
+              <div class="card-content">
+                <div class="card-icon">
+                  <i nz-icon nzType="calendar" nzTheme="outline"></i>
+                </div>
+                <div class="card-stats">
+                  <span class="card-value">{{
+                    formatarDuracao(jornada.horasExtras)
+                  }}</span>
+                  <span class="card-label">Horário Extra</span>
+                </div>
+              </div>
+            </nz-card>
+          </nz-col>
+
+          <nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8">
+            <nz-card class="info-card card-restante">
+              <div class="card-content">
+                <div class="card-icon">
+                  <i nz-icon nzType="hourglass" nzTheme="outline"></i>
+                </div>
+                <div class="card-stats">
+                  <span class="card-value">{{
+                    formatarDuracao(jornada.horasRestantes)
+                  }}</span>
+                  <span class="card-label">Jornada prevista</span>
+                </div>
+              </div>
+            </nz-card>
+          </nz-col>
+        </nz-row>
+
+        <!-- Timeline com registros do dia -->
+        <div class="registros-timeline" *ngIf="jornada.registrosPonto?.length">
+          <h3>Registros do Dia</h3>
+          <nz-timeline>
+            <nz-timeline-item
+              *ngFor="let registro of jornada.registrosPonto"
+              [nzColor]="registro.tipo === 'ENTRADA' ? 'green' : 'red'"
+            >
+              <h4>{{ registro.tipo }}</h4>
+              <p>{{ registro.dataHora | date : "HH:mm:ss" }}</p>
+            </nz-timeline-item>
+          </nz-timeline>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #semDados>
+      <div *ngIf="!carregando" class="sem-dados">
+        <nz-empty
+          [nzNotFoundContent]="
+            erro || 'Não há dados de jornada disponíveis para hoje.'
+          "
+        ></nz-empty>
+      </div>
+    </ng-template>
+  </nz-card>
+</div>

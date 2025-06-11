@@ -1,0 +1,142 @@
+.container-wrapper {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.registro-ponto-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+
+  :deep(.ant-card-body) {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+// Relógio digital
+.relogio-digital {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+
+  .data-atual {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+  }
+
+  .hora-atual {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1890ff;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #f8f8f8;
+    padding: 16px 32px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+}
+
+// Informações do usuário
+.usuario-info {
+  text-align: center;
+
+  h2 {
+    margin-bottom: 4px;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+// Última marcação
+.ultima-marcacao {
+  margin: 8px 0;
+}
+
+// Botões de ação
+.acoes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+
+  .botoes-registro {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+
+    button {
+      min-width: 180px;
+      height: 50px;
+      font-size: 16px;
+    }
+  }
+
+  .botoes-intervalo {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+
+    button {
+      min-width: 140px;
+    }
+  }
+}
+
+// Registros de hoje
+.registros-hoje {
+  margin-top: 24px;
+
+  h3 {
+    margin-bottom: 16px;
+    font-size: 16px;
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+
+  .sem-registros {
+    margin: 32px 0;
+  }
+}
+
+// Responsividade
+@media screen and (max-width: 576px) {
+  .container-wrapper {
+    padding: 12px;
+  }
+
+  .relogio-digital {
+    .hora-atual {
+      font-size: 36px;
+      padding: 12px 24px;
+    }
+  }
+
+  .acoes-container {
+    .botoes-registro, .botoes-intervalo {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
